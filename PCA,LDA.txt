@@ -1,0 +1,68 @@
+
+# Step 1: Import libraries
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_digits
+from sklearn.decomposition import PCA, TruncatedSVD
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.manifold import TSNE
+from sklearn.preprocessing import StandardScaler
+
+# Step 2: Load the dataset
+digits = load_digits()
+X = digits.data
+y = digits.target
+
+print("Dataset Shape:", X.shape)
+print("Target Shape:", y.shape)
+
+# Step 3: Standardize the data
+X_scaled = StandardScaler().fit_transform(X)
+
+# Step 4: Apply PCA
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+
+# Step 5: Apply LDA
+lda = LinearDiscriminantAnalysis(n_components=2)
+X_lda = lda.fit_transform(X_scaled, y)
+
+# Step 6: Apply SVD
+svd = TruncatedSVD(n_components=2, random_state=42)
+X_svd = svd.fit_transform(X_scaled)
+
+# Step 7: Apply t-SNE
+tsne = TSNE(n_components=2, random_state=42)
+X_tsne = tsne.fit_transform(X_scaled)
+
+# Step 8: Plot all four techniques
+fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+
+plots = [
+    (X_pca, "PCA Visualization"),
+    (X_lda, "LDA Visualization"),
+    (X_svd, "SVD Visualization"),
+    (X_tsne, "t-SNE Visualization")
+]
+
+for ax, (X_reduced, title) in zip(axes.ravel(), plots):
+    scatter = ax.scatter(
+        X_reduced[:, 0],
+        X_reduced[:, 1],
+        c=y,
+        cmap="tab10",
+        s=12
+    )
+    ax.set_title(title)
+    ax.set_xlabel("Component 1")
+    ax.set_ylabel("Component 2")
+
+fig.colorbar(scatter, ax=axes.ravel().tolist(), label="Digit Class")
+plt.tight_layout()
+plt.show()
+
+# Step 9: Display PCA variance
+print("\nPCA Explained Variance Ratio:")
+print(pca.explained_variance_ratio_)
+
+print("\nTotal PCA Variance Retained:")
+print(pca.explained_variance_ratio_.sum())
