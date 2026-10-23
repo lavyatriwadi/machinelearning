@@ -1,0 +1,41 @@
+
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import DBSCAN
+
+# Load dataset
+iris = load_iris()
+X = iris.data
+
+# Scale the data
+X_scaled = StandardScaler().fit_transform(X)
+
+# Apply DBSCAN
+dbscan = DBSCAN(eps=0.8, min_samples=5)
+cluster_labels = dbscan.fit_predict(X_scaled)
+
+# Display labels
+print("First 20 Cluster Labels:")
+print(cluster_labels[:20])
+
+print("\nUnique Cluster Labels:")
+print(set(cluster_labels))
+
+# Count clusters and noise points
+n_clusters = len(set(cluster_labels)) - (1 if -1 in cluster_labels else 0)
+n_noise = list(cluster_labels).count(-1)
+
+print("\nNumber of Clusters:", n_clusters)
+print("Number of Noise Points:", n_noise)
+
+# Plot clusters
+plt.figure(figsize=(8, 6))
+plt.scatter(
+    X_scaled[:, 2], X_scaled[:, 3],
+    c=cluster_labels, cmap="viridis"
+)
+plt.xlabel("Standardized Petal Length")
+plt.ylabel("Standardized Petal Width")
+plt.title("DBSCAN Clustering on Iris Dataset")
+plt.show()
