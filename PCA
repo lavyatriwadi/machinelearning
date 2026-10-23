@@ -1,0 +1,39 @@
+
+# Step 1: Import libraries
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+
+# Step 2: Load the Iris dataset
+iris = load_iris()
+X = iris.data
+y = iris.target
+
+# Step 3: Standardize the data
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Step 4: Apply PCA to reduce 4 features to 2
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+
+# Step 5: Display results
+print("Original Shape:", X.shape)
+print("Reduced Shape:", X_pca.shape)
+
+print("Explained Variance Ratio:")
+print(pca.explained_variance_ratio_)
+
+print("Total Variance Retained:")
+print(pca.explained_variance_ratio_.sum())
+
+# Step 6: Visualize the reduced data
+plt.figure(figsize=(8, 6))
+plt.scatter(X_pca[:, 0], X_pca[:, 1], c=y, cmap="viridis")
+
+plt.xlabel("Principal Component 1")
+plt.ylabel("Principal Component 2")
+plt.title("PCA on Iris Dataset")
+plt.colorbar(label="Iris Class")
+plt.show()
